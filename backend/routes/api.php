@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ManufacturerController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +20,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/user', [UserController::class, 'store']);
 Route::post('/login', [UserController::class, 'login']);
+
+Route::apiResource('/category', CategoryController::class);
+Route::apiResource('/product', ProductController::class);
+Route::apiResource('/manufacturer', ManufacturerController::class);
 
 Route::post('/user/tokens', function(Request $request) {
     $user = User::find($request->id);
