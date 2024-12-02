@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name', 255);
             $table->text('description')->nullable();
             $table->decimal('unit_price', 10, 2);
-            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained('product_categories')->nullOnDelete();
             $table->foreignId('manufacturer_id')->nullable()->constrained('manufacturers')->nullOnDelete();
             $table->timestamps();
         });

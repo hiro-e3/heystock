@@ -2,17 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class ProductCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::paginate();
+        $paginate = $request->query('paginate');
+
+        switch ($paginate) {
+            case 'simple':
+                $categories = ProductCategory::all();
+                return response()->json($categories, 200, [], \JSON_PRETTY_PRINT);
+            case 'cursor':
+                $categories = ProductCategory::all();
+                return response()->json($categories, 200, [], \JSON_PRETTY_PRINT);
+            default:
+        }
+
+        $categories = ProductCategory::paginate();
         return response()->json($categories, 200, [], \JSON_PRETTY_PRINT);
     }
 
@@ -26,7 +38,7 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $category = Category::create($validated);
+        $category = ProductCategory::create($validated);
 
 
         return response()->json(['message' => 'Category created', 'data' => $category], 201);
@@ -37,7 +49,7 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        $category = Category::with('products')->findOrFail($id);
+        $category = ProductCategory::with('products')->findOrFail($id);
         return response()->json($category);
     }
 
@@ -51,7 +63,7 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $category = Category::findOrFail($id);
+        $category = ProductCategory::findOrFail($id);
         $category->update($validated);
 
         return response()->json(['message' => 'Category updated', 'data' => $category]);
@@ -62,7 +74,7 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $category = Category::findOrFail($id);
+        $category = ProductCategory::findOrFail($id);
         $category->delete();
 
         return response()->json(['message' => 'Category deleted']);

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @mixed Illuminate\Database\Eloquent\Builder
  */
-class Category extends Model
+class ProductCategory extends Model
 {
     //
     protected $fillable = ['name', 'description'];
