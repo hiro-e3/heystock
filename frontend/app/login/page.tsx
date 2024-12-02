@@ -12,12 +12,14 @@ export default async function LoginPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
 
-  if(token) {
+  if (token) {
     console.log(`Token exists ${token.value}`);
     redirect("/");
   }
 
   return (
-    <LoginForm />
+    <div className="flex h-screen w-full items-center justify-center px-4">
+      <LoginForm />
+    </div>
   );
 }
