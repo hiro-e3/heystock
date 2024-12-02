@@ -20,18 +20,20 @@ export type PaginatorResponse<T> = {
 export type SimplePaginatorResponse<T> = {
   currentPage: number;
   data: T[];
-  firstItem: number | null;
-  lastItem: number | null;
+  firstPageUrl: string | null;
+  from: number | null;
   nextPageUrl: string | null;
   perPage: number;
   prevPageUrl: string | null;
   to: number | null;
-  total: number;
 };
 
 export type CursorPaginatorResponse<T> = {
   data: T[];
+  path: string;
   nextCursor: string | null;
+  nextPageUrl: string | null;
   prevCursor: string | null;
+  prevPageUrl: string | null;
 };
 
