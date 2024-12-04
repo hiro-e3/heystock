@@ -13,7 +13,6 @@ export default async function LoginPage() {
   const token = cookieStore.get("token");
 
   if (token) {
-    console.log(`Token exists ${token.value}`);
     redirect("/");
   }
 

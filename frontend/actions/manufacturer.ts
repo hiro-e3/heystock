@@ -1,17 +1,16 @@
-"use server";
-import { cookies } from "next/headers";
-import { ProductCategory, ProductCategorySchema } from "@/types/product-categories";
-import * as v from 'valibot';
+"use server"
+import { Manufacturer, ManufacturerSchema } from "@/types/manufacturer";
 import { revalidateTag } from "next/cache";
-const CategoriesSchema = v.array(ProductCategorySchema);
+import { cookies } from "next/headers";
+import * as v from 'valibot';
 
-export async function getProductCategories(): Promise<ProductCategory[]> {
+export async function getManufacturers(): Promise<Manufacturer[]> {
   const cookieStore = await cookies();
   const apiUrl = process.env.API_URL;
   const token = cookieStore.get("token")?.value;
 
   const categories = await fetch(
-    `${apiUrl}/products/categories`,
+    `${apiUrl}/manufacturers`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -19,12 +18,12 @@ export async function getProductCategories(): Promise<ProductCategory[]> {
         Authorization: `Bearer ${token}`,
       },
       next: {
-        tags: ["categories"],
+        tags: ["manufacturers"],
       }
     }
   );
   
-  const result = v.safeParse(CategoriesSchema, await categories.json());
+  const result = v.safeParse(v.array(ManufacturerSchema), await categories.json());
 
   if(result.success) {
     return result.output;
@@ -34,13 +33,15 @@ export async function getProductCategories(): Promise<ProductCategory[]> {
   }
 }
 
-export async function createProductCategory(category: Omit<ProductCategory, 'id'>): Promise<ProductCategory> {
+export async function createManufacturer(
+  manufacturer: Omit<Manufacturer, 'id'| 'created_at' | 'updated_at'>
+) {
   const cookieStore = await cookies();
   const apiUrl = process.env.API_URL;
   const token = cookieStore.get("token")?.value;
 
   const response = await fetch(
-    `${apiUrl}/products/categories`,
+    `${apiUrl}/manufacturers`,
     {
       method: "POST",
       headers: {
@@ -48,17 +49,13 @@ export async function createProductCategory(category: Omit<ProductCategory, 'id'
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(category),
+      body: JSON.stringify(manufacturer),
     }
   );
 
   const result = await response.json();
-  if(response.ok) {
-    
-    revalidateTag("categories");
-    return result;
-  } else {
-    console.error(result);
-    return result;
-  }
+
+  revalidateTag("manufacturers");
+
+  return result;
 }

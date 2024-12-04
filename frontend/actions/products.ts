@@ -1,18 +1,19 @@
 "use server";
 import { cookies } from "next/headers";
-import { SimplePaginatorResponse } from "../types/paginator-response";
+import { PaginatorResponse } from "../types/paginator-response";
 import { Product } from "@/types/product";
 import { revalidateTag } from "next/cache";
 
 export async function getProducts(
-  perPage: number = 15
-): Promise<SimplePaginatorResponse<Product>> {
+  page: string,
+  perPage: number = 15,
+): Promise<PaginatorResponse<Product>> {
   const cookieStore = await cookies();
   const apiUrl = process.env.API_URL;
   const token = cookieStore.get("token")?.value;
 
   const products = await fetch(
-    `${apiUrl}/products?paginate=simple&perPage=${perPage}`,
+    `${apiUrl}/products?&per_page=${perPage}&page=${page}&includes=category,manufacturer`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +27,6 @@ export async function getProducts(
   );
   
   const result = await products.json();
-  console.log(result);
 
   // バリデーションいる？
   return result;
@@ -53,7 +53,6 @@ export async function createProduct(
   );
 
   const result = await response.json();
-  console.log(result);
 
   revalidateTag("products");
 
@@ -81,9 +80,34 @@ export async function updateProduct(
   );
 
   const result = await response.json();
-  console.log(result);
-
   revalidateTag("products");
+
+  return result;
+}
+
+export async function deleteProduct(id: number) {
+  const cookieStore = await cookies();
+  const apiUrl = process.env.API_URL;
+  const token = cookieStore.get("token")?.value;
+
+  const response = await fetch(
+    `${apiUrl}/products/${id}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const result = await response.json();
+  if(response.ok) {
+    revalidateTag("products");
+  } else {
+    console.error(result);
+  }
 
   return result;
 }

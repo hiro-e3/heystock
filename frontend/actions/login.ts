@@ -24,10 +24,11 @@ export default async function login(email: string, password: string) {
     const data = v.safeParse(TokenSchema, await response.json());
     
     if(data.success) {
-      console.log(data);
       const cookieStore = await cookies();
       cookieStore.set('token', data.output.token, { secure: true, sameSite: 'strict',  httpOnly: true });
       redirect('/');
+    } else {
+      console.log(data);
     }
 
     return;
