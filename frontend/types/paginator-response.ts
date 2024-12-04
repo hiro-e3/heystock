@@ -1,39 +1,39 @@
 export type PaginatorResponse<T> = {
-  currentPage: number;
+  current_page: number;
   data: T[];
-  firstPageUrl: string;
+  first_page_url: string;
   from: number | null;
-  lastPage: number;
-  lastPageUrl: string;
+  last_page: number;
+  last_page_url: string;
   links: {
     url: string | null;
     label: string;
     active: boolean;
   }[];
-  nextPageUrl: string | null;
+  next_page_url: string | null;
   path: string;
-  perPage: number;
+  per_page: number;
   to: number | null;
   total: number;
 };
 
 export type SimplePaginatorResponse<T> = {
-  currentPage: number;
+  current_page: number;
   data: T[];
-  firstPageUrl: string | null;
+  first_page_url: string | null;
   from: number | null;
-  nextPageUrl: string | null;
-  perPage: number;
-  prevPageUrl: string | null;
+  next_page_url: string | null;
+  per_page: number;
+  prev_page_url: string | null;
   to: number | null;
 };
 
 export type CursorPaginatorResponse<T> = {
   data: T[];
   path: string;
-  nextCursor: string | null;
-  nextPageUrl: string | null;
-  prevCursor: string | null;
-  prevPageUrl: string | null;
+  next_cursor: string | null;
+  next_page_url: string | null;
+  prev_cursor: string | null;
+  prev_page_url: string | null;
 };
 
