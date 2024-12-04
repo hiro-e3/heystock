@@ -12,7 +12,7 @@ class ManufacturerController extends Controller
      */
     public function index()
     {
-        return Manufacturer::all();
+        return response()->json(Manufacturer::all());
     }
 
     /**

@@ -12,20 +12,8 @@ class ProductCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $paginate = $request->query('paginate');
-
-        switch ($paginate) {
-            case 'simple':
-                $categories = ProductCategory::all();
-                return response()->json($categories, 200, [], \JSON_PRETTY_PRINT);
-            case 'cursor':
-                $categories = ProductCategory::all();
-                return response()->json($categories, 200, [], \JSON_PRETTY_PRINT);
-            default:
-        }
-
-        $categories = ProductCategory::paginate();
-        return response()->json($categories, 200, [], \JSON_PRETTY_PRINT);
+        $categories = ProductCategory::all();
+        return response()->json($categories, 200);
     }
 
     /**
