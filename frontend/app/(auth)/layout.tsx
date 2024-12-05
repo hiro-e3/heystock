@@ -59,10 +59,6 @@ export default async function AuthorizedLayout({
         <SidebarTrigger />
         {children}
       </SidebarInset>
-      {/* <main className="w-full dark:bg-slate-900">
-        <SidebarTrigger className="text-white" />
-        {children}
-      </main> */}
     </SidebarProvider>
   );
 }
