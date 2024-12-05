@@ -11,11 +11,11 @@ import {
 import { Manufacturer } from "@/types/manufacturer";
 
 export function ManufacturerSelect({
-  manucaturers,
+  manufacturers: manufacturers,
   value,
   onValueChange,
 }: {
-  manucaturers: Manufacturer[];
+  manufacturers: Manufacturer[];
   value?: string;
   onValueChange?: (value: string) => void;
 }) {
@@ -26,7 +26,7 @@ export function ManufacturerSelect({
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {manucaturers.map((manucaturer) => (
+          {manufacturers.map((manucaturer) => (
             <SelectItem key={manucaturer.id} value={manucaturer.id.toString()}>
               {manucaturer.name}
             </SelectItem>

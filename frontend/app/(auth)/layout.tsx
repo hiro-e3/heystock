@@ -10,7 +10,7 @@ const menuItems: MenuItem[] = [
     href: "/products",
     icon: PackageOpen,
     subItems: [
-      { title: "商品一覧", href: "/products/list", icon: PackageSearch },
+      { title: "商品一覧", href: "/products", icon: PackageSearch },
       { title: "商品登録", href: "/products/create", icon: PackagePlus },
       { title: "商品種別", href: "/products/category", icon: Blocks }
     ],

@@ -21,7 +21,7 @@ export async function getProducts(
         Authorization: `Bearer ${token}`,
       },
       next: {
-        tags: ["products"],
+        tags: ["products", `products?page=${page}`],
       }
     }
   );
