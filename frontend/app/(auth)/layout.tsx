@@ -3,6 +3,8 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { Users, Briefcase, Package, PackageOpen, PackagePlus, PackageSearch, Blocks } from "lucide-react";
 import { MenuItem } from "@/types/menu-item";
 import { getUser } from "@/actions/user";
+import { Suspense } from "react";
+import { redirect } from "next/navigation";
 
 const menuItems: MenuItem[] = [
   {
@@ -10,7 +12,7 @@ const menuItems: MenuItem[] = [
     href: "/products",
     icon: PackageOpen,
     subItems: [
-      { title: "商品一覧", href: "/products", icon: PackageSearch },
+      { title: "商品一覧", href: "/products/list", icon: PackageSearch },
       { title: "商品登録", href: "/products/create", icon: PackagePlus },
       { title: "商品種別", href: "/products/category", icon: Blocks }
     ],
@@ -50,11 +52,24 @@ export default async function AuthorizedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getUser();
+  async function getUserInner() {
+    'use server'
+    const userRes = await getUser();
+    if(userRes?.ok) {
+      return await userRes.json();
+    } else {
+      // (await cookies()).delete("token");
+      redirect("/login");
+    }
+  }
+  const user = await getUserInner();
 
   return (
     <SidebarProvider>
-      <AppSidebar menuItems={menuItems} userInfo={user} />
+      <Suspense>
+        <AppSidebar menuItems={menuItems} userInfo={user} />
+      </Suspense>
+      
       <SidebarInset>
         <SidebarTrigger />
         {children}

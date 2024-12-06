@@ -1,6 +1,5 @@
-"use server";
+'use server'
 
-import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
 export async function getUser() {
@@ -8,28 +7,17 @@ export async function getUser() {
   // 環境変数からAPIのURLを取得
   const apiUrl = process.env.API_URL;
 
-  const token = cookieStore.get("token")?.value;
+  const token = cookieStore.get("token");
 
   if (token === undefined) {
-    redirect("/login");
+    return undefined;
   }
 
-  const res = await fetch(`${apiUrl}/users`, {
+  return fetch(`${apiUrl}/users`, {
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token.value}`,
     },
   });
-
-  if (!res.ok) {
-    if (res.status === 401) {
-      // UnAuthorizedが返ってきた場合、何らかの理由で無効なトークンがCookieにあるので消す
-      cookieStore.delete("token");
-    }
-
-    redirect("/login");
-  }
-
-  return res.json();
 }
