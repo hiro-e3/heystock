@@ -15,10 +15,10 @@ export default async function ProductLayout({
   ]);
   return (
     <div className="container mx-auto">
-      <h1 className="text-2xl">商品管理</h1>
       <div className="flex flex-col mt-5">
         <ProductProvider>
-          <div className="flex justify-end mb-3">
+          <div className="flex justify-between mb-3">
+            <h1 className="text-3xl">商品管理</h1>
             <ProductDialog
               categories={categories}
               manucaturers={manufacturers}
