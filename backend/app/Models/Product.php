@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Traits\QueryHelpers;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use QueryHelpers;
+    use QueryHelpers, HasFactory;
 
     protected $fillable = ['name', 'description', 'unit_price', 'category_id', 'manufacturer_id'];
 
