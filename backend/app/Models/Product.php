@@ -19,6 +19,6 @@ class Product extends Model
 
     public function manufacturer()
     {
-        return $this->belongsTo(Manufacturer::class);
+        return $this->belongsTo(Company::class,'manufacturer_id','id');
     }
 }

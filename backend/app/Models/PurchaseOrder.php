@@ -11,6 +11,13 @@ class PurchaseOrder extends Model
     /** @use HasFactory<\Database\Factories\PurchaseOrderFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'supplier_id',
+        'order_date',
+        'delivery_date',
+        'note',
+    ];
+
     public function details(): HasMany
     {
         return $this->hasMany(PurchaseOrderDetail::class);

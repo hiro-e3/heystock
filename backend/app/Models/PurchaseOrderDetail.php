@@ -10,6 +10,14 @@ class PurchaseOrderDetail extends Model
     /** @use HasFactory<\Database\Factories\PurchaseOrderDetailFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'purchase_order_id',
+        'product_id',
+        'quantity',
+        'price',
+        'note',
+    ];
+
     public function order()
     {
         return $this->belongsTo(PurchaseOrder::class);
