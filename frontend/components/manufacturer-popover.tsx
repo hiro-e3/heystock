@@ -1,6 +1,6 @@
 'use client';
 
-import { createManufacturer } from "@/actions/manufacturer";
+import { createCompany } from "@/actions/company";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,28 +9,36 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Manufacturer } from "@/types/manufacturer";
+import { Company } from "@/types/company";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 
 type NewManufacturer = Omit<{
-  [K in keyof Required<Manufacturer>]: NonNullable<Required<Manufacturer>[K]>;
+  [K in keyof Required<Company>]: NonNullable<Required<Company>[K]>;
 }, "id" | "created_at" | "updated_at"> & Partial<{ id: number }>;
 
 export function ManufacturerPopover({ defaultValue }: { defaultValue?: NewManufacturer}) {
   const [open, setOpen] = useState(false);
 
   const [manufacturer, setManufacturer] = useState<NewManufacturer>(defaultValue ?? {
+    id: undefined,
+    code: "",
+    company_type: [],
     name: "",
-    description: "",
+    short_name: "",
+    kana_name: "",
+    representative: "",
+    postal_code: "",
     address: "",
     phone: "",
+    fax: "",
     email: "",
-    contact_person: "",
+    url: "",
+    description: ""
   });
 
   return (
-    <Popover open={open}>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="secondary" size="icon" onClick={() => setOpen(true)}>
           <Plus />
@@ -43,7 +51,24 @@ export function ManufacturerPopover({ defaultValue }: { defaultValue?: NewManufa
             e.preventDefault();
             e.stopPropagation();
             
-            createManufacturer(manufacturer).then(() => {
+            createCompany(manufacturer).then(() => {
+              setManufacturer({
+                id: undefined,
+                code: "",
+                company_type: [],
+                name: "",
+                short_name: "",
+                kana_name: "",
+                representative: "",
+                postal_code: "",
+                address: "",
+                phone: "",
+                fax: "",
+                email: "",
+                url: "",
+                description: ""
+              });
+              
               setOpen(false);
             }).catch((err) => {
               console.error(err);
@@ -114,16 +139,16 @@ export function ManufacturerPopover({ defaultValue }: { defaultValue?: NewManufa
               </div>
               <div className="grid grid-cols-3 items-center gap-4">
                 <Label htmlFor="new-manufacturer-contact-person">
-                  Contact Person
+                  Representative
                 </Label>
                 <Input
                   id="new-manufacturer-contact-person"
-                  value={manufacturer.contact_person}
+                  value={manufacturer.representative}
                   className="col-span-2 h-8"
                   onChange={(e) =>
                     setManufacturer({
                       ...manufacturer,
-                      contact_person: e.target.value,
+                      representative: e.target.value,
                     })
                   }
                 />

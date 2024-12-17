@@ -30,7 +30,7 @@ export function ProductCategoryPopover({
   
   return (
     <>
-      <Popover open={open}>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="secondary" size="icon" onClick={() => setOpen(true)}>
             <Plus />
@@ -42,6 +42,11 @@ export function ProductCategoryPopover({
             e.stopPropagation();
 
             createProductCategory(category).then(() => {
+              setCategory({
+                name: '',
+                description: '',
+              });
+              
               setOpen(false);
             }).catch((err) => {
               console.error(err);

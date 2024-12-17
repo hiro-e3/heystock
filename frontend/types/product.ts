@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 import { ProductCategorySchema } from './product-categories';
-import { ManufacturerSchema } from './manufacturer';
+import { CompanySchema } from './company';
 export const ProductSchema = v.object({
   id: v.number(),
   name: v.pipe(v.string(), v.maxLength(255)),
@@ -8,10 +8,8 @@ export const ProductSchema = v.object({
   unit_price: v.string(),
   category_id: v.optional(v.number()),
   manufacturer_id: v.optional(v.number()),
-  created_at: v.date(),
-  updated_at: v.date(),
   category: v.optional(ProductCategorySchema),
-  manufacturer: v.optional(ManufacturerSchema)
+  manufacturer: v.optional(CompanySchema)
 });
 
 export type Product = v.InferInput<typeof ProductSchema>;

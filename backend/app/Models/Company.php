@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\CompanyType;
+use App\Traits\QueryHelpers;
 use Illuminate\Database\Eloquent\Casts\AsEnumArrayObject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
@@ -13,7 +14,7 @@ use function Illuminate\Log\log;
 class Company extends Model
 {
     /** @use HasFactory<\Database\Factories\CompanyFactory> */
-    use HasFactory;
+    use HasFactory,QueryHelpers;
 
     protected $fillable = [
         'code',

@@ -4,7 +4,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -25,10 +24,7 @@ import Link from "next/link";
 
 import { ModeToggle } from "./mode-toggle";
 import { MenuItem } from "@/types/menu-item";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { User } from "@/types/user";
 import { AppSidebarFooter } from "./app-sidebar-footer";
 
@@ -60,19 +56,25 @@ export function AppSidebar({
         {menuItems.map((item) => (
           <SidebarMenu key={item.title}>
             <SidebarGroup>
-              <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
               <Collapsible className="group/collapsible">
                 <SidebarGroupContent>
                   <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
+                    {item.subItems != undefined && item.subItems?.length > 0 ? (
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton asChild>
+                          <div>
+                            {item.icon && <item.icon />}
+                            <Link href={item.href}>{item.title}</Link>
+                            <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                          </div>
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                    ) : (
                       <SidebarMenuButton asChild>
-                        <div>
-                          {item.icon && <item.icon />}
-                          <span>{item.title}</span>
-                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                        </div>
+                        
+                        <Link href={item.href}>{item.icon && <item.icon />} <span>{item.title}</span></Link>
                       </SidebarMenuButton>
-                    </CollapsibleTrigger>
+                    )}
                   </SidebarMenuItem>
                   <CollapsibleContent>
                     <SidebarMenuSub>

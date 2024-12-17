@@ -7,13 +7,16 @@ import { revalidateTag } from "next/cache";
 export async function getProducts(
   page: string,
   perPage: number = 15,
+  fields: (keyof Product)[] = []
 ): Promise<PaginatorResponse<Product>> {
   const cookieStore = await cookies();
   const apiUrl = process.env.API_URL;
   const token = cookieStore.get("token")?.value;
 
+  const fieldsJoined = fields.join(",");
+
   const products = await fetch(
-    `${apiUrl}/products?&per_page=${perPage}&page=${page}&includes=category,manufacturer`,
+    `${apiUrl}/products?&per_page=${perPage}&page=${page}&includes=category,manufacturer${fieldsJoined ? `&fields=${fieldsJoined}` : ""}`,
     {
       headers: {
         "Content-Type": "application/json",

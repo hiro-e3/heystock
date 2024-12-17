@@ -8,14 +8,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Manufacturer } from "@/types/manufacturer";
+import { Company } from "@/types/company";
 
 export function ManufacturerSelect({
-  manufacturers: manufacturers,
+  manufacturers,
   value,
   onValueChange,
 }: {
-  manufacturers: Manufacturer[];
+  manufacturers: Company[];
   value?: string;
   onValueChange?: (value: string) => void;
 }) {

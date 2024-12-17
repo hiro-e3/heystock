@@ -13,20 +13,32 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Company::query();
+        $query = Company::query()
+            ->applySort($request->query('sort'))
+            ->applyIncludes($request->query('includes'))
+            ->applyFields($request->query('fields'));
+
+        $paginateStrategy = $request->query('paginate');
+        $perPage = $request->query('per_page', 20);
 
         $type = $request->query('type');
-        if($type === null) {
-            return response()->json($query->get(), 200);
-        }
-
-        if(is_string($type) && in_array($type, ['manufacturer', 'supplier', 'customer'])) {
+        if (is_string($type) && in_array($type, ['manufacturer', 'supplier', 'customer'])) {
             $query = $query->whereRaw('FIND_IN_SET(?, company_type)', $type);
-        } else {
-            return response()->json(['message' => 'Invalid type parameter'], 400);
         }
 
-        return response()->json($query->get(), 200);
+        switch ($paginateStrategy) {
+            case 'simple':
+                $query = $query->simplePaginate($perPage);
+                break;
+            case 'cursor':
+                $query = $query->cursorPaginate($perPage);
+                break;
+            default:
+                $query = $query->paginate($perPage);
+                break;
+        }
+
+        return response()->json($query, 200);
     }
 
     /**
@@ -37,7 +49,7 @@ class CompanyController extends Controller
         $validated = $request->validate(
             [
                 'code' => 'required|string|unique:companies',
-                'company_type' => ['required','array', Rule::in(['manufacturer', 'supplier', 'customer'])],
+                'company_type' => ['required', 'array', Rule::in(['manufacturer', 'supplier', 'customer'])],
                 'name' => 'required|string',
                 'short_name' => 'required|string',
                 'kana_name' => 'required|string',
@@ -50,7 +62,7 @@ class CompanyController extends Controller
                 'url' => 'required_if:url,""',
                 'description' => ['string', 'nullable'],
             ]
-            );
+        );
 
         $company = Company::create($validated);
         return response()->json($company, 201);
@@ -69,7 +81,27 @@ class CompanyController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate(
+            [
+                'code' => 'string',
+                'company_type' => ['array', Rule::in(['manufacturer', 'supplier', 'customer'])],
+                'name' => 'string',
+                'short_name' => 'string',
+                'kana_name' => 'string',
+                'representative' => 'string',
+                'postal_code' => 'string',
+                'address' => 'string',
+                'phone' => 'string',
+                'fax' => 'string',
+                'email' => 'email',
+                'url' => 'required_if:url,""',
+                'description' => ['string', 'nullable'],
+            ]
+        );
+
+        $company = Company::find($id);
+        $company->update($validated);
+        return response()->json($company, 200);
     }
 
     /**
@@ -77,6 +109,7 @@ class CompanyController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Company::destroy($id);
+        return response()->json(null, 204);
     }
 }
