@@ -15,7 +15,7 @@ class PurchaseOrderController extends Controller
      */
     public function index()
     {
-        return response()->json(PurchaseOrder::all(), 200);
+        return response()->json(PurchaseOrder::query()->paginate(), 200);
     }
 
     /**
@@ -90,7 +90,7 @@ class PurchaseOrderController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return response()->json(PurchaseOrder::query()->with(['details', 'details.product'])->findOrFail($id), 200);
     }
 
     /**

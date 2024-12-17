@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Middleware\UriQueryMiddleware;
 use App\Models\PurchaseOrder;
 use App\Models\User;
@@ -38,8 +39,9 @@ Route::put('/products/{id}', [ProductController::class, 'update']);
 Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/purchase-orders', [PurchaseOrder::class, 'index']);
-    Route::post('/purchase-orders', [PurchaseOrder::class, 'store']);
+    Route::get('/purchase-orders', [PurchaseOrderController::class, 'index']);
+    Route::post('/purchase-orders', [PurchaseOrderController::class, 'store']);
+    Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
 });
 
 Route::apiResource('/companies', CompanyController::class);
