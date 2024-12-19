@@ -7,7 +7,7 @@ export function AppSidebarFooter() {
   return (
     <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
       <DropdownMenuItem onSelect={async ()=> await logout()}>
-        サインアウト
+        ログアウト
       </DropdownMenuItem>
     </DropdownMenuContent>
   );

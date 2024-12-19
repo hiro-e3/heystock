@@ -24,7 +24,6 @@ export function CompanyForm<T extends CompanyFormData>({
 }) {
   return (
     <form id={id} onSubmit={onSubmit} className="flex flex-col gap-2">
-      {company.id && <input type="hidden" name="id" value={company.id} />}
       <div>
         <Label className="col-span-3">
           コード

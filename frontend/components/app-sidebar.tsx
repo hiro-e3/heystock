@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/collapsible";
 
 import { ChevronDown, ChevronUp, User2 } from "lucide-react";
-import { Orbitron } from "next/font/google";
 import Link from "next/link";
 
 import { ModeToggle } from "./mode-toggle";
@@ -27,11 +26,7 @@ import { MenuItem } from "@/types/menu-item";
 import { DropdownMenu, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { User } from "@/types/user";
 import { AppSidebarFooter } from "./app-sidebar-footer";
-
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-});
+import { Logo } from "./logo";
 
 export function AppSidebar({
   menuItems,
@@ -43,11 +38,9 @@ export function AppSidebar({
   return (
     <Sidebar>
       <SidebarHeader className="flex flex-row items-center">
-        <h1
-          className={`text-2xl font-bold text-gray-800 dark:text-gray-50 text-center mx-auto ${orbitron.className}`}
-        >
-          <Link href={"/"}>heystock</Link>
-        </h1>
+        <Link href={"/"} className="text-center mx-auto">
+          <Logo />
+        </Link>
         <div className="ml-auto">
           <ModeToggle />
         </div>
@@ -71,8 +64,9 @@ export function AppSidebar({
                       </CollapsibleTrigger>
                     ) : (
                       <SidebarMenuButton asChild>
-                        
-                        <Link href={item.href}>{item.icon && <item.icon />} <span>{item.title}</span></Link>
+                        <Link href={item.href}>
+                          {item.icon && <item.icon />} <span>{item.title}</span>
+                        </Link>
                       </SidebarMenuButton>
                     )}
                   </SidebarMenuItem>

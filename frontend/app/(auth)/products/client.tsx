@@ -1,14 +1,14 @@
 "use client";
-import { PaginatorResponse } from "@/types/paginator-response";
-import { Product } from "@/types/product";
+import { PaginatorResourceResponse } from "@/types/paginator-response";
+import { ProductResponse } from "@/types/product";
 import { CreateProductDialog } from "./product-dialog";
 import { ProductTable } from "./product-table";
 import { useManufacturers, useProductCategories } from "./provider";
 
-export function ProductPage({
+export function ProductPageClient({
   products,
 }: {
-  products: PaginatorResponse<Product>;
+  products: PaginatorResourceResponse<ProductResponse>;
 }) {
   const categories = useProductCategories();
   const manufacturers = useManufacturers();

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { createCompany } from "@/actions/company";
 import { Button } from "@/components/ui/button";
@@ -9,33 +9,39 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Company } from "@/types/company";
+import { Company, CompanyType } from "@/types/company";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { Textarea } from "./ui/textarea";
 
-type NewManufacturer = Omit<{
-  [K in keyof Required<Company>]: NonNullable<Required<Company>[K]>;
-}, "id" | "created_at" | "updated_at"> & Partial<{ id: number }>;
+type NewManufacturer = Omit<Company, "id">;
 
-export function ManufacturerPopover({ defaultValue }: { defaultValue?: NewManufacturer}) {
+const initialManufacturer = {
+  code: "",
+  company_type: [CompanyType.manufacturer],
+  name: "",
+  short_name: "",
+  kana_name: "",
+  representative: "",
+  postal_code: "",
+  address: "",
+  phone: "",
+  fax: "",
+  email: "",
+  url: "",
+  description: "",
+};
+
+export function ManufacturerPopover({
+  defaultValue,
+}: {
+  defaultValue?: NewManufacturer;
+}) {
   const [open, setOpen] = useState(false);
 
-  const [manufacturer, setManufacturer] = useState<NewManufacturer>(defaultValue ?? {
-    id: undefined,
-    code: "",
-    company_type: [],
-    name: "",
-    short_name: "",
-    kana_name: "",
-    representative: "",
-    postal_code: "",
-    address: "",
-    phone: "",
-    fax: "",
-    email: "",
-    url: "",
-    description: ""
-  });
+  const [manufacturer, setManufacturer] = useState<NewManufacturer>(
+    defaultValue ?? initialManufacturer
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -44,107 +50,90 @@ export function ManufacturerPopover({ defaultValue }: { defaultValue?: NewManufa
           <Plus />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-96">
+      <PopoverContent className="w-[400px] overflow-auto" side="right">
         <form
           id="create-new-manufacturer"
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
-            createCompany(manufacturer).then(() => {
-              setManufacturer({
-                id: undefined,
-                code: "",
-                company_type: [],
-                name: "",
-                short_name: "",
-                kana_name: "",
-                representative: "",
-                postal_code: "",
-                address: "",
-                phone: "",
-                fax: "",
-                email: "",
-                url: "",
-                description: ""
-              });
-              
+
+            const result = await createCompany(manufacturer);
+            if (result.success) {
+              setManufacturer(initialManufacturer);
               setOpen(false);
-            }).catch((err) => {
-              console.error(err);
-            });;
+            } else {
+              console.error(result.errors);
+            }
           }}
-          >
+        >
           <div className="grid gap-4">
             <div className="space-y-2">
               <h4 className="font-medium leading-none">メーカー追加</h4>
             </div>
-            <div className="grid gap-2">
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="new-manufacturer-name">Name</Label>
+            <div>
+              <Label className="col-span-3 flex flex-col gap-1">
+                コード
                 <Input
-                  id="new-manufacturer-name"
+                  type="text"
+                  name="code"
+                  value={manufacturer.code}
+                  onChange={(e) => {
+                    setManufacturer({ ...manufacturer, code: e.target.value });
+                  }}
+                />
+              </Label>
+            </div>
+
+            {/* 取引先名 */}
+            <div className="grid grid-cols-12 gap-1">
+              <Label className="col-span-6 flex flex-col gap-1">
+                名前
+                <Input
+                  id="name"
+                  name="name"
                   value={manufacturer.name}
-                  className="col-span-2 h-8"
+                  onChange={(e) =>
+                    setManufacturer({ ...manufacturer, name: e.target.value })
+                  }
+                />
+              </Label>
+              <Label className="col-span-3 flex flex-col gap-1">
+                かな
+                <Input
+                  type="text"
+                  name="kana_name"
+                  value={manufacturer.kana_name}
                   onChange={(e) =>
                     setManufacturer({
                       ...manufacturer,
-                      name: e.target.value,
+                      kana_name: e.target.value,
                     })
                   }
                 />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="new-manufacturer-address">Address</Label>
+              </Label>
+              <Label className="col-span-3 flex flex-col gap-1">
+                略称
                 <Input
-                  id="new-manufacturer-address"
-                  value={manufacturer.address}
-                  className="col-span-2 h-8"
+                  type="text"
+                  name="short_name"
+                  value={manufacturer.short_name}
                   onChange={(e) =>
                     setManufacturer({
                       ...manufacturer,
-                      address: e.target.value,
+                      short_name: e.target.value,
                     })
                   }
                 />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="new-manufacturer-phone">Phone</Label>
+              </Label>
+            </div>
+
+            <div>
+              <Label className=" flex flex-col gap-1">
+                代表者名
                 <Input
-                  id="new-manufacturer-phone"
-                  value={manufacturer.phone}
-                  className="col-span-2 h-8"
-                  onChange={(e) =>
-                    setManufacturer({
-                      ...manufacturer,
-                      phone: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="new-manufacturer-email">E-mail</Label>
-                <Input
-                  type="email"
-                  id="new-manufacturer-email"
-                  value={manufacturer.email}
-                  className="col-span-2 h-8"
-                  onChange={(e) =>
-                    setManufacturer({
-                      ...manufacturer,
-                      email: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="new-manufacturer-contact-person">
-                  Representative
-                </Label>
-                <Input
-                  id="new-manufacturer-contact-person"
+                  type="text"
+                  name="representative"
                   value={manufacturer.representative}
-                  className="col-span-2 h-8"
                   onChange={(e) =>
                     setManufacturer({
                       ...manufacturer,
@@ -152,28 +141,104 @@ export function ManufacturerPopover({ defaultValue }: { defaultValue?: NewManufa
                     })
                   }
                 />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="new-manufacturer-description">
-                  Description
-                </Label>
+              </Label>
+            </div>
+
+            <div className="grid grid-cols-12 gap-1">
+              <Label className="col-span-2 flex flex-col gap-1">
+                郵便番号
                 <Input
-                  id="new-manufacturer-description"
+                  type="text"
+                  name="postal_code"
+                  value={manufacturer.postal_code}
+                  onChange={(e) => {
+                    setManufacturer({
+                      ...manufacturer,
+                      postal_code: e.target.value,
+                    });
+                  }}
+                />
+              </Label>
+              <Label className="col-span-10 flex flex-col gap-1">
+                住所
+                <Input
+                  type="text"
+                  name="address"
+                  value={manufacturer.address}
+                  onChange={(e) => {
+                    setManufacturer({
+                      ...manufacturer,
+                      address: e.target.value,
+                    });
+                  }}
+                />
+              </Label>
+            </div>
+            <div className="grid grid-cols-2 grid-rows-2 gap-3">
+              <Label className="flex flex-col gap-1">
+                Tel
+                <Input
+                  type="tel"
+                  name="phone"
+                  value={manufacturer.phone}
+                  onChange={(e) => {
+                    setManufacturer({ ...manufacturer, phone: e.target.value });
+                  }}
+                />
+              </Label>
+              <Label className="flex flex-col gap-1">
+                Fax
+                <Input
+                  type="tel"
+                  name="fax"
+                  value={manufacturer.fax}
+                  onChange={(e) => {
+                    setManufacturer({ ...manufacturer, fax: e.target.value });
+                  }}
+                />
+              </Label>
+              <Label className="flex flex-col gap-1">
+                E-mail
+                <Input
+                  type="email"
+                  name="email"
+                  value={manufacturer.email}
+                  onChange={(e) => {
+                    setManufacturer({ ...manufacturer, email: e.target.value });
+                  }}
+                />
+              </Label>
+              <Label className="flex flex-col gap-1">
+                Webサイト
+                <Input
+                  type="url"
+                  name="url"
+                  value={manufacturer.url}
+                  onChange={(e) => {
+                    setManufacturer({ ...manufacturer, url: e.target.value });
+                  }}
+                />
+              </Label>
+            </div>
+            <div>
+              <Label className="flex flex-col gap-1">
+                説明
+                <Textarea
+                  name="description"
                   value={manufacturer.description}
-                  className="col-span-2 h-8"
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setManufacturer({
                       ...manufacturer,
                       description: e.target.value,
-                    })
-                  }
+                    });
+                  }}
                 />
-              </div>
-              <div className="flex flex-row justify-end">
-                <Button type="submit" form="create-new-manufacturer">
-                  追加
-                </Button>
-              </div>
+              </Label>
+            </div>
+            <div className="flex flex-row justify-end">
+              <Button type="submit" form="create-new-manufacturer">
+                追加
+              </Button>
             </div>
           </div>
         </form>

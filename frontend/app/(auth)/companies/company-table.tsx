@@ -9,12 +9,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination";
-import {
   Table,
   TableBody,
   TableCell,
@@ -22,26 +16,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PaginatorResponse } from "@/types/paginator-response";
+import { PaginatorResourceResponse } from "@/types/paginator-response";
 
 import { deleteCompany, updateCompany } from "@/actions/company";
 import { CompanyForm } from "@/components/company-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { calcPagination } from "@/lib/utils";
 import { Company, CompanyType } from "@/types/company";
-import { ChevronsLeft, ChevronsRight, Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { TablePaginator } from "@/components/table-paginator";
 
 export function CompanyTable({
   companies,
 }: {
-  companies: PaginatorResponse<Company>;
+  companies: PaginatorResourceResponse<Company>;
 }) {
-  const pages = calcPagination(companies.current_page, companies.last_page);
-
   return (
     <>
       <div className="h-[700px]">
@@ -117,31 +109,7 @@ export function CompanyTable({
         </Table>
       </div>
 
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationLink href={`?page=1`}>
-              <ChevronsLeft size={16} />
-            </PaginationLink>
-          </PaginationItem>
-          {pages.map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink
-                href={`?page=${page}`}
-                isActive={page === companies.current_page}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-
-          <PaginationItem>
-            <PaginationLink href={`?page=${companies.last_page}`}>
-              <ChevronsRight size={16} />
-            </PaginationLink>
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <TablePaginator currentPage={companies.meta.current_page} lastPage={companies.meta.last_page} />
     </>
   );
 }
@@ -178,7 +146,6 @@ function EditDialog({ targetCompany }: { targetCompany: Company }) {
             setDialogOpen(false);
             toast({
               description: `${company.name}の更新に成功しました。`,
-              duration: 1000,
             });
           }}
         />

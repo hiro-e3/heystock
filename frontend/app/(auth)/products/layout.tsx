@@ -2,15 +2,17 @@ import { ReactNode } from "react";
 import { ProductDataProvider } from "./provider";
 import { getProductCategories } from "@/actions/category";
 import { getManufacturers } from "@/actions/company";
+import { getWarehouses } from "@/actions/warehouse";
 
 export default async function ProductLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const [categories, manufacturers] = await Promise.all([
+  const [categories, manufacturers, warehouses] = await Promise.all([
     getProductCategories(),
     getManufacturers(),
+    getWarehouses(),
   ]);
 
   return (
@@ -19,6 +21,7 @@ export default async function ProductLayout({
       <ProductDataProvider
         categories={categories}
         manufacturers={manufacturers}
+        warehouses={warehouses}
       >
         {children}
       </ProductDataProvider>

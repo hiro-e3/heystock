@@ -54,11 +54,11 @@ export function ProductCategoryPopover({
           }}>
             <div className="grid gap-4">
               <div className="space-y-2">
-                <h4 className="font-medium leading-none">カテゴリ追加</h4>
+                <h4 className="font-medium leading-none">商品種類追加</h4>
               </div>
               <div className="grid gap-2">
                 <div className="grid grid-cols-3 items-center gap-4">
-                  <Label htmlFor="new-category-name">Name</Label>
+                  <Label htmlFor="new-category-name">商品種類名称</Label>
                   <Input
                     id="new-category-name"
                     value={category.name}
@@ -72,7 +72,7 @@ export function ProductCategoryPopover({
                   />
                 </div>
                 <div className="grid grid-cols-3 items-center gap-4">
-                  <Label htmlFor="new-category-description">Description</Label>
+                  <Label htmlFor="new-category-description">説明</Label>
                   <Input
                     id="new-category-description"
                     value={category.description}

@@ -1,11 +1,20 @@
 'use server'
-import { Company, CompanySchema, CompanyType } from "@/types/company";
-import { PaginatorResponse } from "@/types/paginator-response";
+import { ActionResult } from "@/types/action-result";
+import { Company, CompanySchema, CompanyType, Supplier } from "@/types/company";
+import { PaginatorLinksSchema, PaginatorMetaSchema, PaginatorResourceResponse } from "@/types/paginator-response";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import * as v from 'valibot';
+import * as v from "valibot";
 
-export async function getCompanies(type?: CompanyType): Promise<PaginatorResponse<Company>> {
+const CompanyPaginatorSchema = v.pipe(
+  v.object({
+    data: v.array(CompanySchema),
+    meta: PaginatorMetaSchema,
+    links: PaginatorLinksSchema,
+  })
+);
+
+export async function getCompanies(type?: CompanyType): Promise<PaginatorResourceResponse<Company>> {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
   const res = await fetch(`${process.env.API_URL}/companies${ type ? `?type=${type}` : ""}`, {
@@ -22,13 +31,15 @@ export async function getCompanies(type?: CompanyType): Promise<PaginatorRespons
   const result = await res.json();
 
   if (res.ok) {
-    const data = v.safeParse(v.array(CompanySchema), result.data);
-    if(!data.success) {
-      console.log(result);
-      console.log(data);
-      throw new Error("Failed to fetch companies");
+    const parseResult = v.safeParse(CompanyPaginatorSchema, result);
+    if(parseResult.success) {
+      return parseResult.output;
+    } else {
+      const issues = v.flatten(parseResult.issues);
+      console.error(issues);
+      console.error(result);
+      throw new Error("Failed to parse companies");
     }
-    return {...result, data: data.output};
   } else {
     console.error(result);
     throw new Error("Failed to fetch companies");
@@ -37,6 +48,25 @@ export async function getCompanies(type?: CompanyType): Promise<PaginatorRespons
 
 export async function getManufacturers(): Promise<Company[]> {
   return (await getCompanies(CompanyType.manufacturer)).data;
+}
+
+export async function getSuppliers(): Promise<PaginatorResourceResponse<Supplier>> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const res = await fetch(`${process.env.API_URL}/suppliers`, {
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    next: {
+      tags: ["companies"]
+    }
+  });
+
+  const result = await res.json();
+
+  return result;
 }
 
 export async function getCompany(id: number): Promise<Company | null> {
@@ -60,7 +90,17 @@ export async function getCompany(id: number): Promise<Company | null> {
   }
 }
 
-export async function createCompany(company: Omit<Company, "id">): Promise<Company | null> {
+export async function createCompany(company: Omit<Company, "id">): Promise<ActionResult<Company, unknown>> {
+  const parsedCompany = v.safeParse(v.omit(CompanySchema, ['id']), company);
+  if (!parsedCompany.success) {
+    const flattenIssues = v.flatten(parsedCompany.issues);
+    console.error("validation issues", flattenIssues);
+    return {
+      success: false,
+      errors: flattenIssues,
+    };
+  }
+
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
 
@@ -74,12 +114,20 @@ export async function createCompany(company: Omit<Company, "id">): Promise<Compa
     body: JSON.stringify(company),
   });
 
+  const result = await res.json();
+
   if (res.ok) {
     revalidateTag("companies");
-    return await res.json();
+    return {
+      success: true,
+      data: result,
+    };
   } else {
-    console.error(await res.json());
-    return null;
+    console.error(result);
+    return {
+      success: false,
+      errors: result
+    };
   }
 }
 

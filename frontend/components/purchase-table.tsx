@@ -23,7 +23,10 @@ export function PurchaseTable({
         <TableRow>
           <TableHead>注文日</TableHead>
           <TableHead>配達日</TableHead>
+          <TableHead>発注先</TableHead>
+          <TableHead>合計金額</TableHead>
           <TableHead>メモ</TableHead>
+          <TableHead>詳細</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -31,7 +34,9 @@ export function PurchaseTable({
           <TableRow key={purchaseOrder.id}>
             <TableCell>{purchaseOrder.order_date}</TableCell>
             <TableCell>{purchaseOrder.delivery_date}</TableCell>
-            <TableCell>{purchaseOrder.note}</TableCell>
+            <TableCell>{purchaseOrder.supplier.name}</TableCell>
+            <TableCell>{purchaseOrder.total_price}</TableCell>
+            <TableCell className="overflow-hidden">{purchaseOrder.note}</TableCell>
             <TableCell><Link href={`/purchase/${purchaseOrder.id}`} className="hover:underline">詳細</Link></TableCell>
           </TableRow>
         ))}

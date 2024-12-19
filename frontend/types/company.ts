@@ -1,4 +1,5 @@
 import * as v from "valibot";
+import { Product } from "./product";
 
 export enum CompanyType {
   manufacturer = "manufacturer",
@@ -7,7 +8,7 @@ export enum CompanyType {
 }
 
 export const CompanySchema = v.object({
-  id: v.number(),
+  id: v.pipe(v.number(), v.integer()), 
   code: v.pipe(v.string(), v.maxLength(15)),
   company_type: v.array(v.enum(CompanyType)),
   name: v.pipe(v.string(), v.maxLength(255)),
@@ -23,4 +24,6 @@ export const CompanySchema = v.object({
   description: v.string(),
 });
 
-export type Company = v.InferInput<typeof CompanySchema>;
+export type Company = v.InferInput<typeof CompanySchema> & { id: number };
+
+export type Supplier = Company & { supply_products: Product[] };

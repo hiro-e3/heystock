@@ -4,6 +4,7 @@ import { PaginatorResponse } from "@/types/paginator-response";
 import { PurchaseOrder } from "@/types/purchase-order";
 import { PurchaseOrderDetail } from "@/types/purchase-order-detail";
 import { cookies } from "next/headers";
+import * as v from 'valibot';
 
 export async function getPurchaseOrders(): Promise<PaginatorResponse<PurchaseOrder>> {
   const apiUrl = process.env.API_URL;
@@ -24,6 +25,13 @@ export async function getPurchaseOrders(): Promise<PaginatorResponse<PurchaseOrd
   const result = await response.json();
 
   if(response.ok) {
+    console.log(result);
+    const data = v.safeParse(v.array(PurchaseOrder), result.data);
+    if(data.success) {
+      result.data = data.output;
+    }
+
+    
     return result;
   } else {
     console.error(result);

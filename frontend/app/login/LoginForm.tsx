@@ -14,6 +14,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/logo";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -25,7 +26,7 @@ const LoginForm = () => {
   return (
     <Card className="w-[350px]">
       <CardHeader>
-        <CardTitle>Login</CardTitle>
+        <CardTitle><Logo /></CardTitle>
       </CardHeader>
       <CardContent>
         <form
@@ -72,7 +73,7 @@ const LoginForm = () => {
                     }
                   }}
                   required
-                  placeholder="E-mail"
+                  placeholder="メールアドレスを入力してください"
                 />
                 <p className="text-red-500 text-sm">{emailError}</p>
               </div>
@@ -102,7 +103,7 @@ const LoginForm = () => {
                     }
                   }}
                   required
-                  placeholder="Password"
+                  placeholder="パスワードを入力してください"
                 />
                 <p className="text-red-500 text-sm">{passwordError}</p>
               </div>
@@ -111,11 +112,11 @@ const LoginForm = () => {
         </form>
       </CardContent>
       <CardFooter>
-        <div className="flex">
+        <div className="flex flex-col gap-2">
+        <p className="text-red-500 text-xs">{serverError}</p>
           <Button type="submit" form="login-form">
-            Login
+            ログイン
           </Button>
-          <p className="text-red-500 text-sm">{serverError}</p>
         </div>
       </CardFooter>
     </Card>

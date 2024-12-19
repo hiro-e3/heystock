@@ -6,10 +6,10 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Product } from "@/types/product";
-import { ManufacturerSelect } from "./manufacturer-select";
+import { SelectManufacturer } from "./select-manufacturer";
 import { ProductCategory } from "@/types/product-categories";
 import { ManufacturerPopover } from "@/components/manufacturer-popover";
-import { ProductCategorySelect } from "./ProductCategorySelect";
+import { ProductCategorySelect } from "./select-category";
 import { ProductCategoryPopover } from "@/components/category-popover";
 
 type ProductFormData =
@@ -50,7 +50,7 @@ export function ProductForm<T extends ProductFormData>({
       <div>
         <Label htmlFor="manufacturer">メーカー</Label>
         <div className="flex flex-row gap-2">
-          <ManufacturerSelect
+          <SelectManufacturer
             manufacturers={manucaturers}
             onValueChange={(id) => {
               onChange({
@@ -65,7 +65,7 @@ export function ProductForm<T extends ProductFormData>({
         </div>
       </div>
       <div>
-        <Label htmlFor="category">カテゴリ</Label>
+        <Label htmlFor="category">種類</Label>
         <div className="flex flex-row gap-2">
           <ProductCategorySelect
             categories={categories}

@@ -1,5 +1,5 @@
 import { getProducts } from "@/actions/products";
-import { ProductPage } from "./client";
+import { ProductPageClient } from "./client";
 
 export default async function Page({
   searchParams,
@@ -10,6 +10,6 @@ export default async function Page({
   const product = await getProducts(page);
 
   return (
-    <ProductPage products={product} />
+    <ProductPageClient products={product} />
   );
 }

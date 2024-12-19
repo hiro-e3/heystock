@@ -1,4 +1,6 @@
 "use client";
+import { createProduct } from "@/actions/products";
+import { ProductForm } from "@/components/product-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,16 +11,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ProductCategory } from "@/types/product-categories";
-import { ProductForm } from "@/components/product-form";
-import { Product } from "@/types/product";
-import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Company } from "@/types/company";
+import { ProductCategory } from "@/types/product-categories";
+import { useState } from "react";
 
-type NewProduct = Omit<Product, "id" | "created_at" | "updated_at"> &
-  Partial<{ id: number }>;
-
-const initialProduct: NewProduct = {
+const initialProduct = {
   id: undefined,
   name: "",
   unit_price: "",
@@ -35,6 +33,7 @@ export function CreateProductDialog({
 }) {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [product, setProduct] = useState(initialProduct);
+  const { toast } = useToast();
 
   return (
     <>
@@ -55,12 +54,32 @@ export function CreateProductDialog({
             商品の追加・編集を行います。
           </DialogDescription>
           <DialogHeader>
-            <DialogTitle>商品{product?.id ? "編集" : "追加"}</DialogTitle>
+            <DialogTitle>商品登録</DialogTitle>
           </DialogHeader>
-          <ProductForm id="create-product-form" product={product} categories={categories} manucaturers={manucaturers} onChange={setProduct} />
+          <ProductForm
+            id="create-product-form"
+            product={product}
+            categories={categories}
+            manucaturers={manucaturers}
+            onChange={setProduct}
+            onSubmit={async (o) => {
+              o.preventDefault();
+              o.stopPropagation();
+
+              const result = await createProduct(product);
+              if (result.success) {
+                toast({
+                  description: `${product.name} id:${result.data.id} を登録しました`,
+                });
+                setProduct(initialProduct);
+              } else {
+                console.error(result.errors);
+              }
+            }}
+          />
           <DialogFooter>
             <Button type="submit" form="create-product-form">
-              作成
+              登録
             </Button>
           </DialogFooter>
         </DialogContent>

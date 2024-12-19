@@ -8,12 +8,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -22,29 +16,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { calcPagination, numberFormatter } from "@/lib/utils";
-import { PaginatorResponse } from "@/types/paginator-response";
-import { Product } from "@/types/product";
-import { ChevronsLeft, ChevronsRight, Edit, Trash2 } from "lucide-react";
+import { numberFormatter } from "@/lib/utils";
+import { PaginatorResourceResponse } from "@/types/paginator-response";
+import { Product, ProductResponse } from "@/types/product";
+import { Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { deleteProduct } from "@/actions/products";
+import { deleteProduct, updateProduct } from "@/actions/products";
 import { Company } from "@/types/company";
 import { ProductCategory } from "@/types/product-categories";
 import { useState } from "react";
 import { ProductForm } from "@/components/product-form";
+import { InventoryCreateDialog } from "./inventory-dialog";
+import { TablePaginator } from "@/components/table-paginator";
+import { useToast } from "@/hooks/use-toast";
 
 export function ProductTable({
   products,
   manufacturers,
   categories,
 }: {
-  products: PaginatorResponse<
-    Product
-  >;
+  products: PaginatorResourceResponse<ProductResponse>;
   manufacturers: Company[];
   categories: ProductCategory[];
 }) {
-  const pages = calcPagination(products.current_page, products.last_page);
   return (
     <>
       <div className="h-[700px]">
@@ -55,6 +49,7 @@ export function ProductTable({
               <TableHead>名前</TableHead>
               <TableHead>種類</TableHead>
               <TableHead>定価</TableHead>
+              <TableHead>在庫数</TableHead>
               <TableHead>説明</TableHead>
               <TableHead>操作</TableHead>
             </TableRow>
@@ -68,9 +63,21 @@ export function ProductTable({
                 <TableCell>
                   {numberFormatter.format(Number.parseFloat(p.unit_price))}
                 </TableCell>
+                <TableCell>{p.total_inventory}</TableCell>
                 <TableCell>{p.description}</TableCell>
                 <TableCell className="flex gap-2">
-                  <EditProductDialog defaultProduct={p} manucaturers={manufacturers} categories={categories} />
+                  <EditProductDialog
+                    defaultProduct={{
+                      id: p.id,
+                      name: p.name,
+                      description: p.description ?? "",
+                      unit_price: p.unit_price,
+                      manufacturer_id: p.manufacturer?.id,
+                      category_id: p.category?.id,
+                    }}
+                    manucaturers={manufacturers}
+                    categories={categories}
+                  />
                   <Button
                     title="削除"
                     type="button"
@@ -84,6 +91,7 @@ export function ProductTable({
                       <Trash2 />
                     </span>
                   </Button>
+                  <InventoryCreateDialog product={p} />
                 </TableCell>
               </TableRow>
             ))}
@@ -91,31 +99,10 @@ export function ProductTable({
         </Table>
       </div>
 
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationLink href={`?page=1`}>
-              <ChevronsLeft size={16} />
-            </PaginationLink>
-          </PaginationItem>
-          {pages.map((page) => (
-            <PaginationItem key={page}>
-              <PaginationLink
-                href={`?page=${page}`}
-                isActive={page === products.current_page}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-
-          <PaginationItem>
-            <PaginationLink href={`?page=${products.last_page}`}>
-              <ChevronsRight size={16} />
-            </PaginationLink>
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <TablePaginator
+        currentPage={products.meta.current_page}
+        lastPage={products.meta.last_page}
+      />
     </>
   );
 }
@@ -125,23 +112,18 @@ function EditProductDialog({
   categories,
   manucaturers,
 }: {
-  defaultProduct: Product;
+  defaultProduct: Product & { id: number };
   categories: ProductCategory[];
   manucaturers: Company[];
 }) {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [product, setProduct] = useState(defaultProduct);
-
+  const { toast } = useToast();
   return (
     <>
       <Dialog open={isDialogOpen} onOpenChange={(o) => setDialogOpen(o)}>
         <DialogTrigger asChild>
-          <Button
-            title="編集"
-            type="button"
-            variant="outline"
-            size="icon-sm"
-          >
+          <Button title="編集" type="button" variant="outline" size="icon-sm">
             <span>
               <Edit />
             </span>
@@ -158,10 +140,23 @@ function EditProductDialog({
             categories={categories}
             manucaturers={manucaturers}
             onChange={setProduct}
+            onSubmit={async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const result = await updateProduct(product);
+              if (result.success) {
+                toast({
+                  description: `${product.name} id:${product.id} を更新しました`,
+                });
+                setDialogOpen(false);
+              } else {
+                console.error(result.errors);
+              }
+            }}
           />
           <DialogFooter>
             <Button type="submit" form="create-product-form">
-              作成
+              更新
             </Button>
           </DialogFooter>
         </DialogContent>

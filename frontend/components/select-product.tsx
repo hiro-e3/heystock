@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Select,
@@ -8,27 +8,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ProductCategory } from "@/types/product-categories";
+import { Product } from "@/types/product";
 
-export function ProductCategorySelect({
-  categories,
+export function SelectProduct({
+  products,
   value,
   onValueChange,
 }: {
-  categories: ProductCategory[];
+  products: Product[];
   value?: string;
   onValueChange?: (value: string) => void;
 }) {
   return (
-    <Select onValueChange={onValueChange} value={value} >
+    <Select onValueChange={onValueChange} value={value}>
       <SelectTrigger>
-        <SelectValue placeholder="select category" />
+        <SelectValue placeholder="select product" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {categories.map((category) => (
-            <SelectItem key={category.id} value={category.id.toString()}>
-              {category.name}
+          {products.map((product) => (
+            <SelectItem key={product.id} value={product.id.toString()}>
+              {product.name}
             </SelectItem>
           ))}
         </SelectGroup>

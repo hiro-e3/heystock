@@ -1,6 +1,6 @@
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { Users, Briefcase, Package, PackageOpen, UserRoundPlus } from "lucide-react";
+import { Briefcase, Package, PackageOpen } from "lucide-react";
 import { MenuItem } from "@/types/menu-item";
 import { getUser } from "@/actions/user";
 import { Suspense } from "react";
@@ -20,24 +20,10 @@ const menuItems: MenuItem[] = [
     subItems: [],
   },
   {
-    title: "在庫",
+    title: "在庫履歴",
     href: "/inventory",
     icon: Package,
-    subItems: [
-      { title: "仕入発注", href: "/purchase", icon: Package },
-      { title: "在庫一覧", href: "/inventory", icon: Package },
-      { title: "入庫登録", href: "/inventory/in", icon: Package },
-      { title: "出庫登録", href: "/inventory/out", icon: Package },
-    ],
-  },
-  {
-    title: "ユーザー",
-    href: "/users",
-    icon: Users,
-    subItems: [
-      { title: "ユーザー一覧", href: "/users", icon: Users },
-      { title: "ユーザー登録", href: "/users/create", icon: Users },
-    ],
+    subItems: []
   },
 ];
 

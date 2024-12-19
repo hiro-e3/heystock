@@ -1,39 +1,38 @@
-export type PaginatorResponse<T> = {
-  current_page: number;
-  data: T[];
-  first_page_url: string;
-  from: number | null;
-  last_page: number;
-  last_page_url: string;
-  links: {
-    url: string | null;
-    label: string;
-    active: boolean;
-  }[];
-  next_page_url: string | null;
-  path: string;
-  per_page: number;
-  to: number | null;
-  total: number;
-};
+import * as v from "valibot";
 
-export type SimplePaginatorResponse<T> = {
-  current_page: number;
-  data: T[];
-  first_page_url: string | null;
-  from: number | null;
-  next_page_url: string | null;
-  per_page: number;
-  prev_page_url: string | null;
-  to: number | null;
-};
+export const PaginatorLinksSchema = v.object({
+  first: v.nullable(v.pipe(v.string(), v.url())),
+  last: v.nullable(v.pipe(v.string(), v.url())),
+  prev: v.nullable(v.pipe(v.string(), v.url())),
+  next: v.nullable(v.pipe(v.string(), v.url())),
+});
 
-export type CursorPaginatorResponse<T> = {
-  data: T[];
-  path: string;
-  next_cursor: string | null;
-  next_page_url: string | null;
-  prev_cursor: string | null;
-  prev_page_url: string | null;
-};
+export type PaginatorLinks = v.InferInput<typeof PaginatorLinksSchema>;
 
+export const PaginatorMetaSchema = v.object({
+  current_page: v.number(),
+  from: v.nullable(v.number()),
+  last_page: v.number(),
+  links: v.array(
+    v.object({
+      url: v.nullable(v.string()),
+      label: v.string(),
+      active: v.boolean(),
+    })
+  ),
+  path: v.pipe(v.string(), v.url()),
+  per_page: v.number(),
+  to: v.nullable(v.number()),
+  total: v.number(),
+});
+
+export type PaginatorMeta = v.InferInput<typeof PaginatorMetaSchema>;
+
+export type LengthAwarePaginator<T> = { data: T[] } & PaginatorMeta &
+  PaginatorLinks;
+
+export type PaginatorResourceResponse<T> = {
+  data: T[];
+  meta: PaginatorMeta;
+  links: PaginatorLinks;
+};
