@@ -8,6 +8,12 @@ trait QueryHelpers
 {
     /**
      * Apply sorting to the query.
+     *
+     * when queried `sort=field1,-field2`, it will be translated to:
+     *
+     * `SELECT * FROM table ORDER BY field1 ASC, field2 DESC`
+     * @param Builder $query
+     * @param string $sortParams
      */
     public function scopeApplySort(Builder $query, $sortParams)
     {
@@ -28,6 +34,10 @@ trait QueryHelpers
 
     /**
      * Apply eager loading for includes.
+     * when queried `includes=relation1,relation2`, it will be translated to: `with('relation1', 'relation2')`
+     * @param Builder $query
+     * @param string $includeParams
+     * @return Builder
      */
     public function scopeApplyIncludes(Builder $query, $includeParams)
     {
@@ -39,6 +49,10 @@ trait QueryHelpers
 
     /**
      * Apply field selection to the query result.
+     * when queried `fields=field1,field2`, it will be translated to: `SELECT field1, field2`
+     * @param Builder $query
+     * @param string|null $fields
+     * @return Builder
      */
     public function scopeApplyFields(Builder $query, $fields)
     {

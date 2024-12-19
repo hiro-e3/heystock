@@ -52,21 +52,21 @@ class ProductSeeder extends Seeder
 
         Product::factory()->count(200)->sequence(fn (Sequence $sequence) => [
             'name' => fake()->randomElement(['K-', 'KJ-']) . fake()->numberBetween(6000, 6999),
-        ])->for($color_fit, 'category')->for($aica, 'manufacturer')->create([
+        ])->for($color_fit, 'category')->for($aica, 'manufacturer')->hasAttached($aica, [], 'suppliers')->create([
             'description' => 'アイカ カラーシステムフィット',
             'unit_price' => 9000,
         ]);
 
         Product::factory()->count(20)->sequence(fn (Sequence $sequence) => [
             'name' => fake()->randomElement(['TJ-', 'TJY', 'Tk-', 'TKJ']) . fake()->numberBetween(10100, 12000) . fake()->randomElement(['', 'K', 'KQ', 'KQ98']),
-        ])->for($celsus, 'category')->for($aica, 'manufacturer')->create([
+        ])->for($celsus, 'category')->for($aica, 'manufacturer')->hasAttached($aica, [], 'suppliers')->create([
             'description' => 'アイカ セルサス',
             'unit_price' => 13000,
         ]);
 
         Product::factory()->count(100)->sequence(fn (Sequence $sequence) => [
             'name' => fake()->randomElement(['JC-', 'JI-']) . fake()->numberBetween(1000, 1999),
-        ])->for($ribbean, 'category')->for($aica, 'manufacturer')->create([
+        ])->for($ribbean, 'category')->for($aica, 'manufacturer')->hasAttached($aica, [], 'suppliers')->create([
             'description' => 'アイカ ラビアン',
             'unit_price' => 10000,
         ]);

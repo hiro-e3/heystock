@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductCollection;
 use App\Models\Product;
+use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Schema;
 
 class ProductController extends Controller
@@ -13,28 +16,9 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::query()
-            ->applySort($request->query('sort'))
-            ->applyIncludes($request->query('includes'))
-            ->applyFields($request->query('fields'));
-
-        $paginateStrategy = $request->query('paginate');
         $perPage = $request->query('per_page', 20);
-        switch ($paginateStrategy) {
-            case 'simple':
-                $query = $query->simplePaginate($perPage);
-                break;
-            case 'cursor':
-                $query = $query->cursorPaginate($perPage);
-                break;
-            default:
-                $query = $query->paginate($perPage);
-                break;
-        }
 
-        $pretty_print = $request->has('pretty') ? \JSON_PRETTY_PRINT : 0;
-
-        return response()->json($query, 200, [], $pretty_print);
+        return new ProductCollection(Product::paginate($perPage));
     }
 
     /**
@@ -47,7 +31,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'unit_price' => 'required|numeric',
             'category_id' => 'nullable|exists:product_categories,id',
-            'manufacturer_id' => 'nullable|exists:manufacturers,id',
+            'manufacturer_id' => 'nullable|exists:companies,id',
         ]);
 
         $product = Product::create($validated);
@@ -79,13 +63,13 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'unit_price' => 'numeric',
             'category_id' => 'nullable|exists:product_categories,id',
-            'manufacturer_id' => 'nullable|exists:manufacturers,id',
+            'manufacturer_id' => 'nullable|exists:companies,id',
         ]);
 
         $product = Product::findOrFail($id);
         $product->update($validated);
 
-        return response()->json(['message' => 'Product updated', 'data' => $product], 200);
+        return response()->json(['message' => '商品の更新に成功しました', 'data' => $product], 200);
     }
 
     /**
@@ -93,6 +77,9 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->delete();
+
+        return response()->json(['message' => '商品の削除に成功しました'], 200);
     }
 }

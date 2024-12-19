@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PurchaseOrderResource;
 use App\Models\PurchaseOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,7 @@ class PurchaseOrderController extends Controller
      */
     public function index()
     {
-        return response()->json(PurchaseOrder::query()->paginate(), 200);
+        return PurchaseOrderResource::collection(PurchaseOrder::query()->with('details')->paginate());
     }
 
     /**
@@ -28,7 +29,6 @@ class PurchaseOrderController extends Controller
         $validator = Validator::make($request->all(), [
             'order_date' => 'required|date',
             'supplier_id' => 'required|integer|exists:suppliers,id',
-            'order_date' => 'required|date',
             'delivery_date' => 'nullable|date',
             'note' => 'string',
             'details' => 'required|array',
@@ -71,7 +71,7 @@ class PurchaseOrderController extends Controller
 
             return response()->json([
                 'message' => 'Purchase order and details created successfully.',
-                'data' => $purchaseOrder->load('purchaseOrderDetails'),
+                'data' => $purchaseOrder->load('details'),
             ], 201);
 
         } catch (\Exception $e) {
@@ -90,7 +90,7 @@ class PurchaseOrderController extends Controller
      */
     public function show(string $id)
     {
-        return response()->json(PurchaseOrder::query()->with(['details', 'details.product'])->findOrFail($id), 200);
+        return response()->json(PurchaseOrder::query()->with(['details', 'details.product', 'supplier.supplyProducts'])->findOrFail($id), 200);
     }
 
     /**

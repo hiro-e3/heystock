@@ -8,6 +8,7 @@ use App\Enums\CompanyType;
 use App\Traits\QueryHelpers;
 use Illuminate\Database\Eloquent\Casts\AsEnumArrayObject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 use function Illuminate\Log\log;
 
@@ -32,6 +33,10 @@ class Company extends Model
         'description',
     ];
 
+    public function supplyProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_supplier', 'supplier_id', 'product_id');
+    }
 
     protected function companyType(): Attribute
     {

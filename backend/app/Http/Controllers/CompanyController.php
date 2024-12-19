@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SupplierResource;
 use Illuminate\Http\Request;
 use App\Models\Company;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
@@ -18,7 +20,6 @@ class CompanyController extends Controller
             ->applyIncludes($request->query('includes'))
             ->applyFields($request->query('fields'));
 
-        $paginateStrategy = $request->query('paginate');
         $perPage = $request->query('per_page', 20);
 
         $type = $request->query('type');
@@ -26,19 +27,31 @@ class CompanyController extends Controller
             $query = $query->whereRaw('FIND_IN_SET(?, company_type)', $type);
         }
 
-        switch ($paginateStrategy) {
-            case 'simple':
-                $query = $query->simplePaginate($perPage);
-                break;
-            case 'cursor':
-                $query = $query->cursorPaginate($perPage);
-                break;
-            default:
-                $query = $query->paginate($perPage);
-                break;
+        $options = 0;
+        if ($request->has('pretty')) {
+            $options |= JSON_PRETTY_PRINT;
         }
 
-        return response()->json($query, 200);
+        return new ResourceCollection($query->paginate($perPage));
+    }
+
+    public function suppliers(Request $request)
+    {
+        $query = Company::query()
+            ->with('supplyProducts')
+            ->whereRaw('FIND_IN_SET(?, company_type)', 'supplier')
+            ->applySort($request->query('sort'))
+            ->applyIncludes($request->query('includes'))
+            ->applyFields($request->query('fields'));
+
+        $perPage = $request->query('per_page', 20);
+
+        $options = 0;
+        if ($request->has('pretty')) {
+            $options |= JSON_PRETTY_PRINT;
+        }
+
+        return SupplierResource::collection($query->paginate($perPage));
     }
 
     /**
@@ -51,15 +64,15 @@ class CompanyController extends Controller
                 'code' => 'required|string|unique:companies',
                 'company_type' => ['required', 'array', Rule::in(['manufacturer', 'supplier', 'customer'])],
                 'name' => 'required|string',
-                'short_name' => 'required|string',
-                'kana_name' => 'required|string',
-                'representative' => 'required|string',
-                'postal_code' => 'required|string',
-                'address' => 'required|string',
-                'phone' => 'required|string',
-                'fax' => 'required|string',
-                'email' => 'required|email',
-                'url' => 'required_if:url,""',
+                'short_name' => 'string',
+                'kana_name' => 'string',
+                'representative' => 'string',
+                'postal_code' => 'string',
+                'address' => 'string',
+                'phone' => 'string',
+                'fax' => 'string',
+                'email' => 'email',
+                'url' => 'url',
                 'description' => ['string', 'nullable'],
             ]
         );

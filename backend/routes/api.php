@@ -6,6 +6,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Middleware\UriQueryMiddleware;
 use App\Models\PurchaseOrder;
 use App\Models\User;
@@ -42,6 +44,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/purchase-orders', [PurchaseOrderController::class, 'index']);
     Route::post('/purchase-orders', [PurchaseOrderController::class, 'store']);
     Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
+    Route::apiResource('/warehouses', WarehouseController::class);
+    Route::apiResource('/inventories', InventoryController::class);
 });
 
+Route::get('/suppliers', [CompanyController::class, 'suppliers']);
 Route::apiResource('/companies', CompanyController::class);
