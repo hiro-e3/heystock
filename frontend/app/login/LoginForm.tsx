@@ -80,7 +80,7 @@ const LoginForm = () => {
             </div>
 
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">パスワード</Label>
               <div>
                 <Input
                   type="password"

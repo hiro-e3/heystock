@@ -11,10 +11,12 @@ import {
 import { Warehouse } from "@/types/warehouse";
 
 export function SelectWarehouse({
+  id,
   warehouses,
   value,
   onValueChange,
 }: {
+  id?: string;
   warehouses: Warehouse[];
   value?: string;
   onValueChange?: (value: string) => void;
@@ -24,7 +26,7 @@ export function SelectWarehouse({
       <SelectTrigger>
         <SelectValue placeholder="select warehouses" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent id={id}>
         <SelectGroup>
           {warehouses.map((warehouse) => (
             <SelectItem key={warehouse.id} value={warehouse.id.toString()}>

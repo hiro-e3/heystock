@@ -14,7 +14,7 @@ export function ProductPageClient({
   const manufacturers = useManufacturers();
   
   return (
-    <div className="flex flex-col mt-5">
+    <div className="flex flex-col">
       <div className="flex justify-between mb-3">
         <h1 className="text-3xl">商品管理</h1>
         <CreateProductDialog categories={categories} manucaturers={manufacturers} />

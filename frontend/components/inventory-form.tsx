@@ -4,8 +4,12 @@ import { Input } from "@/components/ui/input";
 import { SelectWarehouse } from "./select-warehouse";
 import { Warehouse } from "@/types/warehouse";
 import { Textarea } from "./ui/textarea";
+import { WarehousePopover } from "./warehouse-popover";
+import { useState } from "react";
 
-type InventoryFormData = Inventory | (Omit<Inventory, "id"> & Partial<{ id: number }>);
+type InventoryFormData =
+  | Inventory
+  | (Omit<Inventory, "id"> & Partial<{ id: number }>);
 
 export function InventoryForm<T extends InventoryFormData>({
   formId,
@@ -14,31 +18,48 @@ export function InventoryForm<T extends InventoryFormData>({
   onInventoryChange,
   warehouses,
 }: {
-  formId?: string
+  formId?: string;
   onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
   inventory: T;
   onInventoryChange: (inventory: T) => void;
   warehouses: Warehouse[];
 }) {
-
+  const [quantity, setQuantity] = useState("");
   return (
     <form id={formId} className="space-y-3" onSubmit={onSubmit}>
       <div>
-        <SelectWarehouse warehouses={warehouses} value={inventory.warehouse_id.toString()} onValueChange={v => onInventoryChange({
-          ...inventory,
-          warehouse_id: Number.parseInt(v),
-        })} />
+        <Label htmlFor="warehouse">倉庫</Label>
+        <div className="flex flex-row gap-2">
+          <SelectWarehouse
+            id="warehouse"
+            warehouses={warehouses}
+            value={inventory.warehouse_id.toString()}
+            onValueChange={(v) =>
+              onInventoryChange({
+                ...inventory,
+                warehouse_id: Number.parseInt(v),
+              })
+            }
+          />
+          <WarehousePopover />
+        </div>
       </div>
       <div>
         <Label htmlFor="quantity">数量</Label>
         <Input
           type="text"
           id="quantity"
-          value={inventory.quantity}
+          value={quantity}
+          pattern="-?[0-9]*(\.[0-9]+)?"
           onChange={(e) => {
+            setQuantity(e.target.value);
+          }}
+          onBlur={() => {
+            const q = Number.parseInt(quantity);
+
             onInventoryChange({
               ...inventory,
-              quantity: Number.parseInt(e.target.value),
+              quantity: isNaN(q) ? 0 : q,
             });
           }}
         />

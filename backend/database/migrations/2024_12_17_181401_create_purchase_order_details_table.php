@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('price', 9, 6);
             $table->string('note', 255)->default('');
             $table->timestamps();
+            $table->index(['purchase_order_id', 'product_id']);
         });
     }
 

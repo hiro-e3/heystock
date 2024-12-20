@@ -3,8 +3,14 @@ import { cookies } from "next/headers";
 import {
   PaginatorLinksSchema,
   PaginatorMetaSchema,
+  PaginatorResourceResponse,
 } from "../types/paginator-response";
-import { Product, ProductResponseSchema, ProductSchema } from "@/types/product";
+import {
+  Product,
+  ProductResponse,
+  ProductResponseSchema,
+  ProductSchema,
+} from "@/types/product";
 import { revalidateTag } from "next/cache";
 import * as v from "valibot";
 import { ActionResult } from "@/types/action-result";
@@ -23,14 +29,14 @@ export async function getProducts(
   page: string,
   perPage: number = 15,
   fields: (keyof Product)[] = []
-) {
+): Promise<ActionResult<PaginatorResourceResponse<ProductResponse>, unknown>> {
   const cookieStore = await cookies();
   const apiUrl = process.env.API_URL;
   const token = cookieStore.get("token")?.value;
 
   const fieldsJoined = fields.join(",");
 
-  const products = await fetch(
+  const response = await fetch(
     `${apiUrl}/products?per_page=${perPage}&page=${page}&includes=category,manufacturer${
       fieldsJoined ? `&fields=${fieldsJoined}` : ""
     }`,
@@ -46,15 +52,31 @@ export async function getProducts(
     }
   );
 
-  const json = await products.json();
+  const json = await response.json();
 
-  const parseResult = await v.safeParseAsync(ProductPaginatorSchema, json);
+  if (response.ok) {
+    const parseResult = await v.safeParseAsync(ProductPaginatorSchema, json);
 
-  if (parseResult.success) {
-    return parseResult.output;
+    if (parseResult.success) {
+      return {
+        success: true,
+        data: parseResult.output,
+      };
+    } else {
+      const flattenIssues = v.flatten(parseResult.issues);
+      return {
+        success: false,
+        errors: flattenIssues,
+      };
+    }
   } else {
-    const flattenIssues = v.flatten(parseResult.issues);
-    return flattenIssues;
+    {
+      console.error(json);
+      return {
+        success: false,
+        errors: json,
+      };
+    }
   }
 }
 

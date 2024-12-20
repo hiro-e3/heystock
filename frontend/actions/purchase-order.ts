@@ -1,12 +1,12 @@
 'use server';
 
-import { PaginatorResponse } from "@/types/paginator-response";
+import { PaginatorResourceResponse } from "@/types/paginator-response";
 import { PurchaseOrder } from "@/types/purchase-order";
 import { PurchaseOrderDetail } from "@/types/purchase-order-detail";
 import { cookies } from "next/headers";
 import * as v from 'valibot';
 
-export async function getPurchaseOrders(): Promise<PaginatorResponse<PurchaseOrder>> {
+export async function getPurchaseOrders(): Promise<PaginatorResourceResponse<PurchaseOrder>> {
   const apiUrl = process.env.API_URL;
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;

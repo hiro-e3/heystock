@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('delivery_date')->nullable();
             $table->text('note');
             $table->timestamps();
+            $table->index(['supplier_id', 'user_id', 'order_date']);
         });
     }
 

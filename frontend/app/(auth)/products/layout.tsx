@@ -16,7 +16,7 @@ export default async function ProductLayout({
   ]);
 
   return (
-    <div className="container mx-auto">
+    <div>
       {/* ページ移動時、商品カテゴリとメーカー情報のfetchが走らないようにProvider経由で渡す */}
       <ProductDataProvider
         categories={categories}

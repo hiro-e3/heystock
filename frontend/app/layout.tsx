@@ -1,6 +1,11 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "heystock",
+};
 
 export default function RootLayout({
   children,
