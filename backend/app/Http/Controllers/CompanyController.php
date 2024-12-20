@@ -107,7 +107,7 @@ class CompanyController extends Controller
                 'phone' => 'string',
                 'fax' => 'string',
                 'email' => 'email',
-                'url' => 'required_if:url,""',
+                'url' => 'url',
                 'description' => ['string', 'nullable'],
             ]
         );

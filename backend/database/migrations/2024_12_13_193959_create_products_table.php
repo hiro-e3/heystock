@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('product_categories')->nullOnDelete();
             $table->foreignId('manufacturer_id')->nullable()->constrained('companies', 'id')->nullOnDelete();
             $table->timestamps();
+            $table->index(['name', 'unit_price']);
         });
     }
 

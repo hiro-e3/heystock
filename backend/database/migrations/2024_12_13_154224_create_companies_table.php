@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('url', 255)->default('');
             $table->text('description');
             $table->timestamps();
+            $table->index(['code', 'company_type', 'name']);
         });
     }
 

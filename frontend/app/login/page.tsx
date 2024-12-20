@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import { getUser } from "@/actions/user";
 
 export const metadata: Metadata = {
-  title: "Login",
+  title: "heystock - ログイン",
   description: "Login form",
 };
 

@@ -39,6 +39,7 @@ export function InventoryCreateDialog({ product }: { product: ProductResponse })
             setDialogOpen(true);
           }}
           size="icon-sm"
+          title="在庫追加"
         >
           <PlusSquare size={16} />
         </Button>

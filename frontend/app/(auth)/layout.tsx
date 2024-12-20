@@ -5,6 +5,11 @@ import { MenuItem } from "@/types/menu-item";
 import { getUser } from "@/actions/user";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "heystock"
+}
 
 const menuItems: MenuItem[] = [
   {
@@ -52,7 +57,9 @@ export default async function AuthorizedLayout({
       
       <SidebarInset>
         <SidebarTrigger />
-        {children}
+        <div className="container px-10 pt-5">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

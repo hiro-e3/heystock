@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('location')->default('');
             $table->text('note');
             $table->timestamps();
+            $table->index(['name']);
         });
     }
 
